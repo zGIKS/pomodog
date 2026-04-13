@@ -1,40 +1,59 @@
 use ratatui::{
-    layout::Alignment,
+    layout::{Alignment, Layout, Constraint},
     style::{Color, Style, Stylize},
     text::{Line, Span},
     widgets::Paragraph,
     Frame,
 };
 
-use crate::app::App;
+use crate::app::{App, Phase};
 
 pub fn render(f: &mut Frame, app: &App, area: ratatui::layout::Rect) {
-    let width = 50; // Total width of the bar
-    let filled = (app.progress as f32 / 100.0 * width as f32) as usize;
+    let chunks = Layout::default()
+        .constraints([
+            Constraint::Length(1), // Large Time
+            Constraint::Length(1), // Spacer
+            Constraint::Length(1), // Status Label
+            Constraint::Length(1), // Bar
+        ])
+        .split(area);
+
+    // 1. GIGANTIC TIMER (The "cronómetro")
+    let timer_text = format!("   {}   ", app.formatted_time());
+    let timer_widget = Paragraph::new(timer_text.bold().white().on_dark_gray())
+        .alignment(Alignment::Center);
+    f.render_widget(timer_widget, chunks[0]);
+
+    // 2. Bar logic
+    let ratio = app.progress_ratio();
+    let percentage = (ratio * 100.0) as u16;
+    let width = 40; 
+    let filled_count = (ratio * width as f32) as usize;
     
-    // Create the bar with a gradient effect
-    let mut spans = Vec::new();
+    let mut bar_spans = Vec::new();
     for i in 0..width {
-        if i < filled {
-            // Gradient from Cyan to Magenta
-            let r = (100.0 + (i as f32 / width as f32) * 155.0) as u8;
+        if i < filled_count {
+            let r = (80.0 + (i as f32 / width as f32) * 150.0) as u8;
             let g = (200.0 - (i as f32 / width as f32) * 100.0) as u8;
             let b = 255;
-            spans.push(Span::styled("█", Style::default().fg(Color::Rgb(r, g, b))));
+            bar_spans.push(Span::styled("█", Style::default().fg(Color::Rgb(r, g, b))));
         } else {
-            // Dark background for the empty part
-            spans.push(Span::styled("░", Style::default().fg(Color::Rgb(40, 40, 40))));
+            bar_spans.push(Span::styled("·", Style::default().fg(Color::Rgb(40, 40, 40))));
         }
     }
 
-    let progress_label = Line::from(vec![
-        Span::styled(format!(" {} / {} ", app.work_duration, app.break_duration), Style::default().bold().white()),
-        Span::styled(format!(" {}% ", app.progress), Style::default().dim()),
+    let (status_label, status_color) = match app.phase {
+        Phase::Work => (" WORKING ", Color::Blue),
+        Phase::Break => (" RESTING ", Color::Green),
+    };
+
+    let label_line = Line::from(vec![
+        Span::styled(status_label, Style::default().bg(status_color).fg(Color::Black).bold()),
+        Span::raw(format!(" {:3}% ", percentage)).dim(),
     ]).alignment(Alignment::Center);
 
-    let bar_line = Line::from(spans).alignment(Alignment::Center);
+    let bar_line = Line::from(bar_spans).alignment(Alignment::Center);
 
-    let progress_widget = Paragraph::new(vec![progress_label, Line::from(""), bar_line]);
-    
-    f.render_widget(progress_widget, area);
+    f.render_widget(Paragraph::new(label_line).alignment(Alignment::Center), chunks[2]);
+    f.render_widget(Paragraph::new(bar_line).alignment(Alignment::Center), chunks[3]);
 }
