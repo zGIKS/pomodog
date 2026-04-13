@@ -20,6 +20,8 @@ pub struct SessionConfig {
     pub break_duration_min: u32,
 }
 
+pub const MAX_TASK_NAME_LEN: usize = 25;
+
 pub struct App {
     pub frame_count: usize,
     pub should_quit: bool,
@@ -80,7 +82,7 @@ impl App {
     }
 
     pub fn add_char(&mut self, c: char) {
-        if self.task_name.len() < 30 {
+        if self.task_name.len() < MAX_TASK_NAME_LEN {
             self.task_name.push(c);
         }
     }

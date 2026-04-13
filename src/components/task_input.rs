@@ -6,7 +6,7 @@ use ratatui::{
     Frame,
 };
 
-use crate::app::App;
+use crate::app::{App, MAX_TASK_NAME_LEN};
 
 pub fn render(f: &mut Frame, app: &App, area: ratatui::layout::Rect) {
     let chunks = Layout::default()
@@ -53,7 +53,8 @@ pub fn render(f: &mut Frame, app: &App, area: ratatui::layout::Rect) {
     .block(Block::default()
         .borders(Borders::ALL)
         .border_type(BorderType::Rounded)
-        .border_style(Style::default().fg(Color::Yellow)))
+        .border_style(Style::default().fg(Color::Yellow))
+        .title_top(Line::from(format!(" {}/{} ", app.task_name.len(), MAX_TASK_NAME_LEN)).right_aligned()))
     .alignment(Alignment::Center);
 
     let footer = Paragraph::new(vec![

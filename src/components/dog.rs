@@ -49,8 +49,8 @@ pub fn render(f: &mut Frame, app: &App, area: ratatui::layout::Rect) {
     };
 
     // Truncate message if it's too long for the bubble
-    let display_msg = if message.len() > 35 {
-        format!("{}...", &message[..32])
+    let display_msg = if message.len() > 45 {
+        format!("{}...", &message[..42])
     } else {
         message
     };
@@ -60,7 +60,7 @@ pub fn render(f: &mut Frame, app: &App, area: ratatui::layout::Rect) {
     f.render_widget(Paragraph::new(bubble_art).alignment(Alignment::Center).cyan(), chunks[0]);
 
     // 2. Render Dog
-    let current_frame = if app.frame_count % 2 == 0 {
+    let current_frame = if app.frame_count.is_multiple_of(2) {
         DOG_FRAME_1
     } else {
         DOG_FRAME_2
