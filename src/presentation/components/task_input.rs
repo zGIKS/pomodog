@@ -73,7 +73,7 @@ pub fn render(f: &mut Frame, app: &App, area: ratatui::layout::Rect, frame_count
     } else {
         Paragraph::new(vec![
             Line::from(""),
-            Line::from("Enter to Start • Backspace to Delete".dim()),
+            Line::from("Enter to Start • Space to Pause/Resume • Backspace to Delete".dim()),
         ])
         .alignment(Alignment::Center)
     };

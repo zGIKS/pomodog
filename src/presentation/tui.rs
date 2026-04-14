@@ -1,9 +1,9 @@
+use super::components::{dog, menu, progress_bar, task_input};
+use crate::domain::{App, AppState};
 use ratatui::{
     layout::{Constraint, Direction, Layout},
     Frame,
 };
-use super::components::{dog, menu, progress_bar, task_input};
-use crate::domain::{App, AppState};
 
 pub fn render(f: &mut Frame, app: &App, frame_count: usize) {
     let area = f.area();
@@ -20,8 +20,8 @@ pub fn render(f: &mut Frame, app: &App, frame_count: usize) {
                 .direction(Direction::Vertical)
                 .constraints([
                     Constraint::Fill(1),
-                    Constraint::Length(12),
-                    Constraint::Length(6),
+                    Constraint::Length(11),
+                    Constraint::Length(5),
                     Constraint::Fill(1),
                 ])
                 .split(area);

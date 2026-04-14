@@ -6,7 +6,7 @@ use ratatui::{
 };
 
 use super::speech_bubble;
-use crate::domain::{App, Phase};
+use crate::domain::{App, AppState, Phase};
 
 pub const DOG_FRAME_1: &str = r#"      .─.        
      { }``;      
@@ -27,15 +27,16 @@ pub fn render(f: &mut Frame, app: &App, area: ratatui::layout::Rect, frame_count
         .split(area);
 
     let message = if let Some(session) = app.session() {
-        match session.phase {
-            Phase::Work => {
+        match (app.state(), session.phase) {
+            (AppState::Paused, _) => String::from("PAUSED..."),
+            (_, Phase::Work) => {
                 if session.task_name.is_empty() {
                     String::from("WORKING...")
                 } else {
                     format!("FOCUSING ON: {}", session.task_name.as_str())
                 }
             }
-            Phase::Break => {
+            (_, Phase::Break) => {
                 if session.task_name.is_empty() {
                     String::from("RESTING...")
                 } else {
