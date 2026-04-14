@@ -2,8 +2,7 @@
 
 ![POMODOG](https://i.imgur.com/eXUcFEH.png)
 
-Pomodog is a terminal-first Pomodoro timer written in Rust.
-It combines a fast TUI, automatic session persistence, and a small ASCII dog companion that reflects your focus state (`WORKING`, `RESTING`, `PAUSED`).
+**Pomodog** is a minimalist, high-performance Pomodoro CLI tool built with Rust. It features a cute ASCII dog companion to keep you focused during your deep work sessions.
 
 ## Features
 
