@@ -1,4 +1,4 @@
-#[derive(Default, Clone, Copy, PartialEq, Eq)]
+#[derive(Default, Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Phase {
     #[default]
     Work,
@@ -12,7 +12,7 @@ pub struct TaskName(String);
 
 impl TaskName {
     pub fn add_char(&mut self, c: char) {
-        if self.0.len() < MAX_TASK_NAME_LEN {
+        if self.0.len() < MAX_TASK_NAME_LEN && is_valid_input_char(c) {
             self.0.push(c);
         }
     }
@@ -39,6 +39,34 @@ impl TaskName {
 
     pub fn len(&self) -> usize {
         self.0.len()
+    }
+
+    pub fn clear(&mut self) {
+        self.0.clear();
+    }
+}
+
+fn is_valid_input_char(c: char) -> bool {
+    !c.is_control() && c != '\u{200B}' && c != '\u{200C}' && c != '\u{200D}' && c != '\u{FEFF}'
+}
+
+#[derive(Default, Clone, Copy, PartialEq, Eq)]
+pub enum InputError {
+    #[default]
+    None,
+    Empty,
+}
+
+impl InputError {
+    pub fn message(&self) -> &'static str {
+        match self {
+            InputError::None => "",
+            InputError::Empty => "Task name cannot be empty!",
+        }
+    }
+
+    pub fn has_error(&self) -> bool {
+        matches!(self, InputError::Empty)
     }
 }
 

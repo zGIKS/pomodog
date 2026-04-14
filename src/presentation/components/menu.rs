@@ -27,12 +27,11 @@ pub fn render(f: &mut Frame, app: &App, area: ratatui::layout::Rect) {
         ])
         .split(chunks[1]);
 
-    // Professional Header without emojis
     let header = Paragraph::new(vec![
         Line::from(""),
         Line::from(vec![
             Span::styled(" ⬢ ", Style::default().fg(Color::Cyan)),
-            Span::styled("POMODORO SESSION", Style::default().bold().white()),
+            Span::styled("POMDOG SESSION", Style::default().bold().white()),
             Span::styled(" ⬢ ", Style::default().fg(Color::Cyan)),
         ]),
         Line::from("────────────────────────────".dim()),
@@ -40,8 +39,8 @@ pub fn render(f: &mut Frame, app: &App, area: ratatui::layout::Rect) {
     .alignment(Alignment::Center);
 
     let mut options = Vec::new();
-    for (i, config) in app.configs.iter().enumerate() {
-        if i == app.selected_index {
+    for (i, config) in app.configs().iter().enumerate() {
+        if i == app.selected_index() {
             options.push(Line::from(vec![
                 Span::styled("  » ", Style::default().fg(Color::Yellow).bold()),
                 Span::styled(&config.label, Style::default().fg(Color::White).bold()),
@@ -65,7 +64,7 @@ pub fn render(f: &mut Frame, app: &App, area: ratatui::layout::Rect) {
     let menu_widget = Paragraph::new(options)
         .block(menu_block)
         .alignment(Alignment::Center);
-    
+
     let footer = Paragraph::new(vec![
         Line::from(""),
         Line::from("▲▼ Move • Enter Start".dim()),
@@ -75,9 +74,9 @@ pub fn render(f: &mut Frame, app: &App, area: ratatui::layout::Rect) {
     let list_layout = Layout::default()
         .direction(Direction::Vertical)
         .constraints([
-            Constraint::Length(4), // Header
-            Constraint::Length(5), // Menu
-            Constraint::Length(3), // Footer
+            Constraint::Length(4),
+            Constraint::Length(5),
+            Constraint::Length(3),
         ])
         .split(inner_chunks[1]);
 
