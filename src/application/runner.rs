@@ -3,8 +3,8 @@ use crossterm::event::{self, Event};
 use std::time::{Duration, Instant};
 
 use crate::application::event_handler::{handle_key_event, handle_mouse_event};
-use crate::domain::{App, AppState};
 use crate::domain::repository::Persistence;
+use crate::domain::{App, AppState};
 use crate::infrastructure::terminal::Tui;
 use crate::presentation::tui::render;
 
@@ -45,20 +45,18 @@ pub fn run(terminal: &mut Tui, mut app: App, persistence: &dyn Persistence) -> R
         if last_second.elapsed() >= Duration::from_secs(1) {
             app.tick();
             last_second = Instant::now();
-            
-            // Save session state if we are running or paused
-            if matches!(app.state(), AppState::Running | AppState::Paused) {
-                let _ = persistence.save(&app);
+
+            if matches!(app.state(), AppState::Running | AppState::Paused)
+                && let Err(e) = persistence.save(&app)
+            {
+                eprintln!("[WARN] Failed to save session: {}", e);
             }
         }
 
-        // Handle deleting session file if user declined to resume
-        if !app.has_saved_session() && app.state() != AppState::Running && app.state() != AppState::Paused {
-            // This is a bit aggressive, but if we don't have a saved session in App state, 
-            // we should make sure the file is gone.
-            // Actually, better only do it if it *just* changed.
-            // For now, let's keep it simple.
-            let _ = persistence.delete_session();
+        if !app.has_saved_session() && !matches!(app.state(), AppState::Running | AppState::Paused)
+            && let Err(e) = persistence.delete_session()
+        {
+            eprintln!("[WARN] Failed to delete session: {}", e);
         }
     }
 

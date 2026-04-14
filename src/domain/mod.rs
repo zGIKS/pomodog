@@ -1,6 +1,6 @@
 pub mod entities;
-pub mod value_objects;
 pub mod repository;
+pub mod value_objects;
 
 pub use entities::*;
 pub use value_objects::*;
@@ -146,13 +146,15 @@ impl App {
 
     pub fn enter_task_input(&mut self) {
         self.state = AppState::TaskInput;
-        self.task_name_input.clear();
-        self.input_error = InputError::default();
-        self.error_timer = 0;
+        self.reset_input_state();
     }
 
     pub fn enter_menu(&mut self) {
         self.state = AppState::Menu;
+        self.reset_input_state();
+    }
+
+    fn reset_input_state(&mut self) {
         self.task_name_input.clear();
         self.input_error = InputError::default();
         self.error_timer = 0;
@@ -232,6 +234,10 @@ impl App {
 
     pub fn session(&self) -> Option<&Session> {
         self.active_session.as_ref()
+    }
+
+    pub fn take_session(&mut self) -> Option<Session> {
+        self.active_session.take()
     }
 
     pub fn should_quit(&self) -> bool {

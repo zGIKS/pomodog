@@ -22,14 +22,11 @@ pub fn handle_key_event(app: &mut App, key: event::KeyEvent) {
         (KeyCode::Backspace, mods, AppState::TaskInput) => {
             if mods == KeyModifiers::CONTROL {
                 app.remove_word_from_task();
+            } else if app.task_name().is_empty() {
+                app.set_input_error(InputError::Empty);
             } else {
-                if app.task_name().is_empty() {
-                    app.set_input_error(InputError::Empty);
-                } else {
-                    app.remove_char_from_task();
-                }
+                app.remove_char_from_task();
             }
-            app.clear_input_error();
         }
         (KeyCode::Enter, _, AppState::TaskInput) => {
             if !app.task_name().is_empty() {

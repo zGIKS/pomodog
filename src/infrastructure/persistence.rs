@@ -1,9 +1,9 @@
+use crate::domain::repository::Persistence;
+use crate::domain::App;
+use anyhow::{Context, Result};
+use directories::ProjectDirs;
 use std::fs;
 use std::path::PathBuf;
-use anyhow::{Result, Context};
-use directories::ProjectDirs;
-use crate::domain::App;
-use crate::domain::repository::Persistence;
 
 pub struct TomlPersistence;
 
@@ -11,10 +11,10 @@ impl TomlPersistence {
     fn get_file_path() -> Result<PathBuf> {
         let dirs = ProjectDirs::from("com", "giks", "pomodog")
             .context("Could not find project directories")?;
-        
+
         let config_dir = dirs.config_dir();
         fs::create_dir_all(config_dir)?;
-        
+
         Ok(config_dir.join("session.toml"))
     }
 }
@@ -35,11 +35,8 @@ impl Persistence for TomlPersistence {
 
         let content = fs::read_to_string(path)?;
         let mut app: App = toml::from_str(&content)?;
-        
-        // Handle session recovery: if we loaded an app with an active session,
-        // move it to recovered_session and put the app in Menu state.
-        if let Some(session) = app.session() {
-            let session = session.clone();
+
+        if let Some(session) = app.take_session() {
             app.set_resume_session(session);
         }
 

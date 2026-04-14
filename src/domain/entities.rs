@@ -1,5 +1,5 @@
-use serde::{Deserialize, Serialize};
 use crate::domain::value_objects::{Phase, TaskName, Timer};
+use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct SessionConfig {

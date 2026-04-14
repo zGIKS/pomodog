@@ -1,5 +1,5 @@
-use anyhow::Result;
 use crate::domain::App;
+use anyhow::Result;
 
 pub trait Persistence: Send + Sync {
     fn save(&self, app: &App) -> Result<()>;

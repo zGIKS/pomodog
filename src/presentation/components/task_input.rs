@@ -49,7 +49,11 @@ pub fn render(f: &mut Frame, app: &App, area: ratatui::layout::Rect, frame_count
         )
     };
 
-    let cursor = if frame_count % 4 < 2 { "_" } else { " " };
+    let cursor = if frame_count.is_multiple_of(2) {
+        "_"
+    } else {
+        " "
+    };
 
     let input_box = Paragraph::new(Line::from(vec![
         input_text,
